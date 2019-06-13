@@ -16,6 +16,7 @@ const supportedClients = ['pg', 'sqlite3', 'mysql', 'mysql2', 'oracle', 'mssql']
 
 function fastifyObjectionjs (fastify, options, next) {
   const knexConfig = Object.assign({}, defaultKnexConfig, options.knexConfig)
+  const instanceName = options.instance || 'objection'
 
   if (supportedClients.indexOf(knexConfig.client) === -1) {
     next(new Error(`unsupported client, 'fastify-objectionjs' only support ${supportedClients.join(', ')}.`))
@@ -50,8 +51,8 @@ function fastifyObjectionjs (fastify, options, next) {
     return
   }
 
-  if (!fastify.objection) {
-    fastify.decorate('objection', objection)
+  if (!fastify[instanceName]) {
+    fastify.decorate(instanceName, objection)
   } else {
     next(new Error('fastify-objectionjs has already registered.'))
     return
